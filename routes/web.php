@@ -23,6 +23,7 @@ Route::get('/comment/{postId}' , [PageController::class , 'getCommentsPage']);
 Route::post('/delete-post/{id}', [PostController::class, 'delete']);
 Route::post('/posts/store', [PostController::class, 'store'])->name('posts.store');
 Route::post('/login', [UserController::class, 'login'])->name('login');
+Route::middleware('auth:web')->post('/logout', [UserController::class, 'logout'])->name('logout');
 Route::post('/create-user', [UserController::class, 'create']);
 Route::post('/update-user/{id}', [UserController::class, 'update']);
 Route::post('/create-share/{userId}', [ShareController::class, 'create']);

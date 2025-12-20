@@ -12,6 +12,11 @@
                 <li class="text-white h-fit bg-indigo-600 px-3 py-2.5 rounded"><a
                         class="block w-max" href="{{ route('post') }}">Create Post</a>
                 </li>
+                <li class="text-white h-fit bg-indigo-600 px-3 py-2.5 rounded"><form action="{{ route('logout') }}" method="POST">
+                     @csrf
+                    <button type="submit">Logout</button>
+</form>
+                </li>
             </ul>
             @if (Request::is('home/*') || Request::is('home') ||  Request::is('search') ||   Request::is('search/*') )
                 <x-search_card :categories="$categories"/>
