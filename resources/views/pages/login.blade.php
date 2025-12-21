@@ -1,114 +1,106 @@
 <!doctype html>
 <html lang="en">
 <head>
+    <!-- Basic meta -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    @vite('resources/css/app.css')
-    <title>Document</title>
-</head>
-<body>
 
-<div class="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-    <div class="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
+    <!-- Tailwind via Vite -->
+    @vite('resources/css/app.css')
+
+    <title>Login</title>
+</head>
+
+<!-- Background: modern gradient -->
+<body class="min-h-screen bg-gradient-to-br from-indigo-900 via-blue-900 to-slate-900 flex items-center justify-center">
+
+<div class="w-full max-w-md px-6">
+
+    <!-- Login card -->
+    <div class="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-xl p-8">
+
+        <!-- Title -->
+        <h2 class="text-center text-3xl font-bold text-white">
+            Welcome back
         </h2>
-        <p class="mt-2 text-center text-sm text-gray-600 max-w">
-            Or
-            <a href="/register" class="font-medium text-blue-600 hover:text-blue-500">
-                create an account
+
+        <!-- Subtitle -->
+        <p class="mt-2 text-center text-sm text-gray-300">
+            Sign in to continue
+        </p>
+
+        <!-- Login form (logic untouched) -->
+        <form class="mt-8 space-y-6" action="{{ route('login') }}" method="post">
+            @csrf
+
+            <!-- Email -->
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-200">
+                    Email address
+                </label>
+                <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    autocomplete="email"
+                    placeholder="Enter your email"
+                    class="mt-1 w-full rounded-lg bg-white/80 px-4 py-2 text-gray-900
+                           placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+            </div>
+
+            <!-- Password -->
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-200">
+                    Password
+                </label>
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    autocomplete="current-password"
+                    placeholder="Enter your password"
+                    class="mt-1 w-full rounded-lg bg-white/80 px-4 py-2 text-gray-900
+                           placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+            </div>
+
+            <!-- Remember me -->
+            <div class="flex items-center">
+                <input
+                    id="remember_me"
+                    name="remember_me"
+                    type="checkbox"
+                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                >
+                <label for="remember_me" class="ml-2 text-sm text-gray-200">
+                    Remember me
+                </label>
+            </div>
+
+            <!-- Submit -->
+            <button
+                type="submit"
+                class="w-full rounded-lg bg-indigo-600 py-2.5 text-white font-semibold
+                       hover:bg-indigo-700 transition focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            >
+                Sign in
+            </button>
+        </form>
+
+        <!-- Register link -->
+        <p class="mt-6 text-center text-sm text-gray-300">
+            Don’t have an account?
+            <a href="/register" class="font-medium text-indigo-400 hover:text-indigo-300">
+                Create one
             </a>
         </p>
-    </div>
 
-    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            <form class="space-y-6" action="{{ route('login') }}" method="post">
-                @csrf
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700">
-                        Email address
-                    </label>
-                    <div class="mt-1">
-                        <input id="email" name="email" type="email" autocomplete="email" required
-                               class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                               placeholder="Enter your email address">
-                    </div>
-                </div>
-
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700">
-                        Password
-                    </label>
-                    <div class="mt-1">
-                        <input id="password" name="password" type="password" autocomplete="current-password" required
-                               class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                               placeholder="Enter your password">
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <input id="remember_me" name="remember_me" type="checkbox"
-                               class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                        <label for="remember_me" class="ml-2 block text-sm text-gray-900">
-                            Remember me
-                        </label>
-                    </div>
-
-
-                </div>
-
-                <div>
-                    <button type="submit"
-                            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-
-                        Sign in
-                    </button>
-                </div>
-            </form>
-            <div class="mt-6">
-
-                <div class="relative">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-gray-300"></div>
-                    </div>
-                    <div class="relative flex justify-center text-sm">
-                        <span class="px-2 bg-gray-100 text-gray-500">
-                            Or continue with
-                        </span>
-                    </div>
-                </div>
-
-                <div class="mt-6 grid grid-cols-3 gap-3">
-                    <div>
-                        <a href="#"
-                           class="w-full flex items-center justify-center px-8 py-3 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                            <img class="h-5 w-5" src="https://www.svgrepo.com/show/512120/facebook-176.svg"
-                                 alt="">
-                        </a>
-                    </div>
-                    <div>
-                        <a href="#"
-                           class="w-full flex items-center justify-center px-8 py-3 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                            <img class="h-5 w-5" src="https://www.svgrepo.com/show/513008/twitter-154.svg"
-                                 alt="">
-                        </a>
-                    </div>
-                    <div>
-                        <a href="#"
-                           class="w-full flex items-center justify-center px-8 py-3 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                            <img class="h-6 w-6" src="https://www.svgrepo.com/show/506498/google.svg"
-                                 alt="">
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
-
 
 </body>
 </html>
