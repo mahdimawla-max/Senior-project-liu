@@ -9,17 +9,16 @@ class Post extends Model
 {
     protected $fillable = ['content', 'userid', 'categoryid'];
 
-    protected $primaryKey = 'post_id';
-
     public function user()
     {
         return $this->belongsTo(User::class, 'userid');
     }
 
-    public function reactions(): HasMany
-    {
-        return $this->hasMany(Reaction::class, 'postid', 'post_id');
-    }
+   public function reactions(): HasMany
+{
+    return $this->hasMany(Reaction::class, 'postid', 'id');
+}
+
 
     public function reactionCount()
     {
@@ -29,6 +28,7 @@ class Post extends Model
     // ✅ ADD THIS (THIS FIXES THE 500 ERROR)
     public function comments(): HasMany
     {
-        return $this->hasMany(Comment::class, 'postid', 'post_id');
+        return $this->hasMany(Comment::class, 'postid', 'id');
+
     }
 }

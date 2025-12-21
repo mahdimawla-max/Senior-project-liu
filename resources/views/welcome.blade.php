@@ -35,18 +35,10 @@
         const el = document.getElementById('comments-' + postId);
         if (!el) return;
 
-        const isOpen = el.classList.contains('max-h-[1000px]');
-
-        if (isOpen) {
-            // CLOSE
-            el.classList.remove('max-h-[1000px]', 'opacity-100');
-            el.classList.add('max-h-0', 'opacity-0');
-        } else {
-            // OPEN
-            el.classList.remove('max-h-0', 'opacity-0');
-            el.classList.add('max-h-[1000px]', 'opacity-100');
-        }
+        el.classList.toggle('hidden');
     }
+</script>
+
 </script>
 
 

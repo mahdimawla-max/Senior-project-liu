@@ -27,11 +27,22 @@ class PostController extends Controller
         return "post updated";
     }
 
-    public function delete($id){
-        $post = Post::findOrFail($id);
-        $post->delete();
-        return redirect('/profile');
-    }
+   public function delete($id)
+{
+    $post = Post::findOrFail($id);
+
+    // ✅ delete related reactions
+    $post->reactions()->delete();
+
+    // ✅ delete related comments (if FK exists)
+    $post->comments()->delete();
+
+    // ✅ now safe to delete post
+    $post->delete();
+
+    return redirect('/profile');
+}
+
 
     public function show($id){
         $post = Post::findOrFail($id);

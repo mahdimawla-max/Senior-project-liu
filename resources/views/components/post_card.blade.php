@@ -11,21 +11,40 @@ $numberOfLikes = \App\Models\Reaction::where('postid', $post->post_id)->count();
 <article class="mx-auto max-w-[900px] my-6 rounded-2xl bg-white dark:bg-slate-800
                 border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
 
-    {{-- Header --}}
-    <div class="flex items-center justify-between px-6 py-4">
-        <div class="flex items-center gap-4">
-            <img class="w-12 h-12 rounded-full object-cover"
-                 src="{{ $post->profilepicture ?: '/images/user-placeholder.png' }}">
-            <div>
-                <p class="font-semibold text-slate-800 dark:text-white">
-                    {{ $post->fullname }}
-                </p>
-                <span class="text-sm text-slate-500">
-                    {{ $timeAgo }}
-                </span>
-            </div>
+  {{-- Header --}}
+<div class="flex items-center justify-between px-6 py-4">
+    <div class="flex items-center gap-4">
+        <img class="w-12 h-12 rounded-full object-cover"
+             src="{{ $post->profilepicture ?: '/images/user-placeholder.png' }}">
+        <div>
+            <p class="font-semibold text-slate-800 dark:text-white">
+                {{ $post->fullname }}
+            </p>
+            <span class="text-sm text-slate-500">
+                {{ $timeAgo }}
+            </span>
         </div>
     </div>
+
+    {{-- DELETE BUTTON (OWNER ONLY) --}}
+    @if(auth()->id() === $post->userid)
+        <form action="/delete-post/{{ $post->post_id }}" method="POST"
+              onsubmit="return confirm('Delete this post?')">
+            @csrf
+            <button
+                class="p-2 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20"
+                title="Delete post">
+                <svg class="w-5 h-5 text-red-500"
+                     fill="none" stroke="currentColor" stroke-width="1.8"
+                     viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M6 7h12M9 7V4h6v3M9 10v7M15 10v7M4 7h16"/>
+                </svg>
+            </button>
+        </form>
+    @endif
+</div>
+
 
     {{-- Content --}}
     @if($post->description)
@@ -41,8 +60,9 @@ $numberOfLikes = \App\Models\Reaction::where('postid', $post->post_id)->count();
         </div>
     @endif
 
-    {{-- Actions --}}
-    <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700">
+    {{-- ACTION BAR (FIXED) --}}
+    <div class="px-6 py-3 border-t border-slate-200 dark:border-slate-700
+                sticky bottom-0 bg-white dark:bg-slate-800 z-10">
         <div class="flex items-center justify-between">
 
             {{-- ❤️ LIKE --}}
@@ -61,8 +81,13 @@ $numberOfLikes = \App\Models\Reaction::where('postid', $post->post_id)->count();
             {{-- 💬 COMMENT --}}
             <button
                 onclick="toggleComments({{ $post->post_id }})"
-                class="px-3 py-2 text-sm rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700">
-                Comments
+                class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700">
+                <svg class="w-5 h-5 text-slate-600 dark:text-slate-300"
+                     fill="none" stroke="currentColor" stroke-width="1.8"
+                     viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M8 10h8m-8 4h6m-6 4h4M4 4h16v16H4z"/>
+                </svg>
             </button>
 
             {{-- 🔗 SHARE --}}
@@ -81,13 +106,16 @@ $numberOfLikes = \App\Models\Reaction::where('postid', $post->post_id)->count();
                 </button>
             </form>
         </div>
+    </div>
 
-        {{-- COMMENTS --}}
-        <div id="comments-{{ $post->post_id }}"
-             class="mt-4 space-y-3 max-h-0 overflow-hidden opacity-0 transition-all duration-300">
+    {{-- COMMENTS PANEL --}}
+    <div id="comments-{{ $post->post_id }}"
+         class="hidden border-t border-slate-200 dark:border-slate-700">
 
+        {{-- SCROLLABLE COMMENTS --}}
+        <div class="max-h-[260px] overflow-y-auto px-6 py-4 space-y-3">
             @foreach($post->comments as $item)
-                <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-700">
+                <div class="p-3 rounded-xl bg-slate-100 dark:bg-slate-700">
                     <div class="flex items-center gap-3 mb-1">
                         <img class="w-8 h-8 rounded-full"
                              src="{{ $item->user->profilepicture ?? '/images/user-placeholder.png' }}">
@@ -103,26 +131,28 @@ $numberOfLikes = \App\Models\Reaction::where('postid', $post->post_id)->count();
                     <p class="text-sm">{{ $item->comment }}</p>
                 </div>
             @endforeach
-
-            {{-- ADD COMMENT --}}
-            <form class="relative mt-3"
-                  onsubmit="submitComment(this, event)">
-                @csrf
-                <input type="hidden" name="userid" value="{{ auth()->id() }}">
-                <input type="hidden" name="postid" value="{{ $post->post_id }}">
-
-                <input
-                    name="comment"
-                    class="w-full h-10 px-4 pr-12 rounded-xl border text-sm"
-                    placeholder="Write a comment...">
-
-                <button type="submit"
-                        class="absolute right-3 top-1/2 -translate-y-1/2">
-                    <svg class="w-4 h-4 fill-slate-500" viewBox="0 0 24 24">
-                        <path d="M2,21L23,12L2,3V10L17,12L2,14V21Z"/>
-                    </svg>
-                </button>
-            </form>
         </div>
+
+        {{-- FIXED WRITE COMMENT --}}
+        <form class="relative px-6 py-3 border-t border-slate-200 dark:border-slate-700
+                     bg-white dark:bg-slate-800"
+              onsubmit="submitComment(this, event)">
+            @csrf
+            <input type="hidden" name="userid" value="{{ auth()->id() }}">
+            <input type="hidden" name="postid" value="{{ $post->post_id }}">
+
+            <input
+                name="comment"
+                class="w-full h-11 px-4 pr-12 rounded-xl border text-sm
+                       focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="Write a comment...">
+
+            <button type="submit"
+                    class="absolute right-9 top-1/2 -translate-y-1/2">
+                <svg class="w-4 h-4 fill-slate-500" viewBox="0 0 24 24">
+                    <path d="M2,21L23,12L2,3V10L17,12L2,14V21Z"/>
+                </svg>
+            </button>
+        </form>
     </div>
 </article>
