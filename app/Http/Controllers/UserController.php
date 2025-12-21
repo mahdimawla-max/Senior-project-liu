@@ -17,6 +17,10 @@ class UserController extends Controller
         return $users;
     }
     public function create(Request $request) {
+        if (User::where('email', $request->email)->exists()) {
+            return redirect()->back()
+             ->withErrors(['email' => 'This email is already registered']);
+}
         try {
             $user = User::create($request->all());
             return redirect('/')->with('success', 'User created successfully!');
@@ -59,4 +63,11 @@ class UserController extends Controller
             return redirect()->back()->withErrors(['error' => 'User not found']);
         }
     }
+    public function logout()
+{
+    Auth::logout();
+
+    return redirect('/');
+    
+}
 }

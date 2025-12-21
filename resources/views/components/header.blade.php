@@ -66,6 +66,17 @@
                                 Create Post
                             </a>
                         </li>
+
+                        <!-- Logout -->
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit"
+                                        class="pb-1 text-gray-300 hover:text-gray-100 transition-colors duration-200 ease-in-out">
+                                    Logout
+                                </button>
+                            </form>
+                        </li>
                     </ul>
                 </div>
 
@@ -139,8 +150,18 @@
                                 Create Post
                             </a>
                         </li>
+
+                        <li class="px-4 py-3 transition-colors duration-200 ease-in-out hover:bg-gray-700">
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="block text-sm font-medium text-gray-200 w-full text-left">
+                                    Logout
+                                </button>
+                            </form>
+                        </li>
                     </ul>
                 </div>
+
             </div>
 
         </div>
