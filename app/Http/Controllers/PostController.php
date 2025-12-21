@@ -91,25 +91,26 @@ class PostController extends Controller
         return view('pages.home', compact('posts', 'categories'));
     }
 
-    public function react(Request $request, Post $post)
-    {
-        $user = Auth::user();
-        $userId = $user->id;
+   public function react(Request $request, $id)
+{
+    $userId = Auth::id();
 
-        $reaction = Reaction::where('userid', $userId)
-            ->where('postid', $post->id)
-            ->first();
+    $reaction = Reaction::where('userid', $userId)
+        ->where('postid', $id) // ✅ FIX HERE
+        ->first();
 
-        if ($reaction) {
-            $reaction->delete();
-            return response()->json(['success' => 'unliked']);
-        } else {
-            Reaction::create([
-                'status' => 'like',
-                'userid' => $userId,
-                'postid' => $post->id
-            ]);
-            return response()->json(['success' => 'liked']);
-        }
+    if ($reaction) {
+        $reaction->delete();
+    } else {
+        Reaction::create([
+            'status' => 'like',
+            'userid' => $userId,
+            'postid' => $id // ✅ FIX HERE
+        ]);
     }
+
+    // ✅ IMPORTANT: return empty 200 response
+    return response()->noContent();
+}
+
 }
