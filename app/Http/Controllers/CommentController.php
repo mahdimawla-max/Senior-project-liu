@@ -12,11 +12,32 @@ class CommentController extends Controller
         return $comments;
 
     }
-    public function create(Request $request){
-        $comment = Comment::create($request->all());
-        return response()->json(['success' => "comments created"]);
+  public function create(Request $request)
+{
+    $request->validate([
+        'postid' => 'required|exists:posts,id',
+        'userid' => 'required|exists:users,id',
+        'comment' => 'required|string|max:500',
+    ]);
 
-    }
+    $comment = Comment::create([
+        'postid' => $request->postid,
+        'userid' => $request->userid,
+        'comment' => $request->comment,
+    ]);
+
+    // IMPORTANT: load user relation
+    $comment->load('user');
+
+    return response()->json([
+        'comment' => $comment->comment,
+        'user' => [
+            'fullname' => $comment->user->fullname,
+            'profilepicture' => $comment->user->profilepicture,
+        ],
+    ]);
+}
+
     public function update(Request $request , $id){
         $comment = Comment::findOrFail($id);
         $comment->update($request->all());
