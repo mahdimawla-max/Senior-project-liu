@@ -101,7 +101,7 @@
 
             <p class="mt-4 text-center text-sm text-gray-300">
                 Already have an account?
-                <a href="/login" class="text-indigo-400 hover:text-indigo-300">
+                <a href="/" class="text-indigo-400 hover:text-indigo-300">
                     Sign in
                 </a>
             </p>
