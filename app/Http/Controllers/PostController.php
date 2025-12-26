@@ -72,7 +72,7 @@ class PostController extends Controller
         $post->description = $request->description;
         $post->save();
 
-        return redirect('/post');
+        return redirect('/home');
     }
 
     public function search(Request $request)
