@@ -9,14 +9,16 @@ use Illuminate\Support\Facades\Auth;
 
 class PageController extends Controller
 {
-    public function getProfilePage()
+     public function getProfilePage()
     {
         $user = Auth::user();
 
         $posts = Post::with([
                 'comments' => function ($q) {
                     $q->orderBy('created_at', 'desc')->with('user');
-                }
+                },
+                'sharedPost.user',
+                'sharedPost.category'
             ])
             ->where('userid', $user->id)
             ->join('users', 'posts.userid', '=', 'users.id')
@@ -35,7 +37,9 @@ class PageController extends Controller
         $sharePosts = Post::with([
                 'comments' => function ($q) {
                     $q->orderBy('created_at', 'desc')->with('user');
-                }
+                },
+                'sharedPost.user',
+                'sharedPost.category'
             ])
             ->whereIn('id', $postIds)
             ->orderBy('posts.created_at', 'desc')
@@ -47,15 +51,16 @@ class PageController extends Controller
             'shares' => $sharePosts
         ]);
     }
-
-    public function showSearchPage($catId = null)
+     public function showSearchPage($catId = null)
     {
         $categories = Category::all();
 
         $posts = Post::with([
                 'comments' => function ($q) {
                     $q->orderBy('created_at', 'desc')->with('user');
-                }
+                },
+                'sharedPost.user',
+                'sharedPost.category'
             ])
             ->when($catId, function ($q) use ($catId) {
                 $q->where('categoryid', $catId);

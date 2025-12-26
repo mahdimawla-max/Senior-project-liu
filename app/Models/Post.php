@@ -35,5 +35,9 @@ class Post extends Model
 {
     return $this->belongsTo(Category::class, 'categoryid');
 }
+  public function sharedPost()
+    {
+        return $this->belongsTo(Post::class, 'shared_post_id');
+    }
 
 }

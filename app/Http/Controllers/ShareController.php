@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use App\Models\Share;
 use App\Models\User;
 
@@ -16,13 +17,26 @@ class ShareController extends Controller
 
     }
 
-    public function create(Request $request, $userId)
+       public function create(Request $request, $userId)
     {
-        $share = Share::firstOrCreate(
-            ['description' => $request['description'] , 'postid' => $request['postid']],
-        );
+        $share = Share::firstOrCreate([
+            'description' => $request->description,
+            'postid' => $request->postid
+        ]);
+
         $user = User::findOrFail($userId);
         $user->shares()->attach($share);
+
+        $originalPost = Post::findOrFail($request->postid);
+
+        Post::create([
+            'userid' => $userId,
+            'shared_post_id' => $originalPost->id,
+            'content' => '',
+            'categoryid' => $originalPost->categoryid,
+            'description' => $request->description ?? null,
+        ]);
+
         return redirect('/home');
     }
 

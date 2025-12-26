@@ -6,12 +6,25 @@ $initialLiked = \App\Models\Reaction::where('userid', auth()->id())
     ->where('postid', $post->post_id)
     ->exists();
 $numberOfLikes = \App\Models\Reaction::where('postid', $post->post_id)->count();
+
+/* 🔴 SHARED POST HELPERS (SAFE FIX) */
+$isShared = !is_null($post->shared_post_id ?? null);
+$originalPost = null;
+
+if ($isShared) {
+    $originalPost = $post->sharedPost;
+
+    if (!$originalPost) {
+        $originalPost = \App\Models\Post::with('user')
+            ->find($post->shared_post_id);
+    }
+}
 ?>
 
 <article class="mx-auto max-w-[900px] my-6 rounded-2xl bg-white dark:bg-slate-800
                 border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
 
-  {{-- Header --}}
+{{-- Header --}}
 <div class="flex items-center justify-between px-6 py-4">
     <div class="flex items-center gap-4">
         <img class="w-12 h-12 rounded-full object-cover"
@@ -51,20 +64,52 @@ $numberOfLikes = \App\Models\Reaction::where('postid', $post->post_id)->count();
     @endif
 </div>
 
-
-{{-- Content --}}
-@if($post->description)
-    <p class="px-6 pb-4 text-slate-700 dark:text-slate-200">
-        {{ $post->description }}
-    </p>
+{{-- 🔴 SHARED INFO --}}
+@if($isShared && $originalPost)
+    <div class="flex items-center gap-2 px-6 pb-2 text-sm text-slate-500">
+        <img class="w-8 h-8 rounded-full object-cover"
+             src="{{ $originalPost->user->profilepicture ?? '/images/user-placeholder.png' }}">
+        <span>
+            <strong>{{ $post->fullname }}</strong> shared
+            <strong>{{ $originalPost->user->fullname }}</strong>'s post
+        </span>
+    </div>
 @endif
 
-@if($post->content)
-    <div class="px-6 pb-4">
-        <img src="{{ $post->content }}"
-             onclick="openImage(this.src)"
-             class="w-full rounded-xl max-h-[500px] object-cover cursor-pointer">
-    </div>
+
+{{-- Content --}}
+@if($isShared && $originalPost)
+
+    @if($originalPost->description)
+        <p class="px-6 pb-4 text-slate-700 dark:text-slate-200">
+            {{ $originalPost->description }}
+        </p>
+    @endif
+
+    @if($originalPost->content)
+        <div class="px-6 pb-4">
+            <img src="{{ asset($originalPost->content) }}"
+                 onclick="openImage(this.src)"
+                 class="w-full rounded-xl max-h-[500px] object-cover cursor-pointer">
+        </div>
+    @endif
+
+@else
+
+    @if($post->description)
+        <p class="px-6 pb-4 text-slate-700 dark:text-slate-200">
+            {{ $post->description }}
+        </p>
+    @endif
+
+    @if($post->content)
+        <div class="px-6 pb-4">
+            <img src="{{ asset($post->content) }}"
+                 onclick="openImage(this.src)"
+                 class="w-full rounded-xl max-h-[500px] object-cover cursor-pointer">
+        </div>
+    @endif
+
 @endif
 
 {{-- ACTION BAR (FIXED) --}}
@@ -119,7 +164,6 @@ $numberOfLikes = \App\Models\Reaction::where('postid', $post->post_id)->count();
 <div id="comments-{{ $post->post_id }}"
      class="hidden border-t border-slate-200 dark:border-slate-700">
 
-    {{-- SCROLLABLE COMMENTS --}}
     <div class="max-h-[260px] overflow-y-auto px-6 py-4 space-y-3">
         @foreach($post->comments as $item)
             <div class="p-3 rounded-xl bg-slate-100 dark:bg-slate-700">
@@ -140,7 +184,6 @@ $numberOfLikes = \App\Models\Reaction::where('postid', $post->post_id)->count();
         @endforeach
     </div>
 
-    {{-- FIXED WRITE COMMENT --}}
     <form class="relative px-6 py-3 border-t border-slate-200 dark:border-slate-700
                  bg-white dark:bg-slate-800"
           onsubmit="submitComment(this, event)">
@@ -164,7 +207,7 @@ $numberOfLikes = \App\Models\Reaction::where('postid', $post->post_id)->count();
 </div>
 </article>
 
-{{-- ✅ IMAGE OVERLAY --}}
+{{-- IMAGE OVERLAY --}}
 <div id="imageOverlay"
      onclick="closeImage()"
      class="fixed inset-0 hidden items-center justify-center
