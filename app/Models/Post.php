@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Post extends Model
 {
-    protected $fillable = ['content', 'userid', 'categoryid'];
+    protected $fillable = ['content', 'userid', 'categoryid','description', 'shared_post_id'];
 
     public function user()
     {
@@ -39,5 +39,9 @@ class Post extends Model
     {
         return $this->belongsTo(Post::class, 'shared_post_id');
     }
+    public function sharesCount()
+{
+    return self::where('shared_post_id', $this->id)->count();
+}
 
 }

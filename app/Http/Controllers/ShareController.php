@@ -17,28 +17,36 @@ class ShareController extends Controller
 
     }
 
-       public function create(Request $request, $userId)
-    {
-        $share = Share::firstOrCreate([
-            'description' => $request->description,
-            'postid' => $request->postid
-        ]);
+public function create(Request $request, $userId)
+{
+    // 1️⃣ Get the post being shared
+    $post = Post::findOrFail($request->postid);
 
-        $user = User::findOrFail($userId);
-        $user->shares()->attach($share);
+    // 2️⃣ Resolve ORIGINAL post (Option 1: flatten)
+    $originalPost = $post->shared_post_id
+        ? Post::findOrFail($post->shared_post_id)
+        : $post;
 
-        $originalPost = Post::findOrFail($request->postid);
+    // 3️⃣ BLOCK duplicate share (THIS WAS FAILING BEFORE)
+    $alreadyShared = Post::where('userid', $userId)
+        ->where('shared_post_id', $originalPost->id)
+        ->exists();
 
-        Post::create([
-            'userid' => $userId,
-            'shared_post_id' => $originalPost->id,
-            'content' => $originalPost->content,
-            'categoryid' => $originalPost->categoryid,
-            'description' => $request->description ?? null,
-        ]);
-
-        return redirect('/home');
+    if ($alreadyShared) {
+        return redirect('/home')->with('error', 'You already shared this post.');
     }
+
+    // 4️⃣ Create the shared post (ONLY SOURCE OF TRUTH)
+    Post::create([
+        'userid' => $userId,
+        'shared_post_id' => $originalPost->id,
+        'content' => $originalPost->content,
+        'categoryid' => $originalPost->categoryid,
+        'description' => $request->description ?? null,
+    ]);
+
+    return redirect('/home');
+}
 
     public function update(Request $request, $id)
     {

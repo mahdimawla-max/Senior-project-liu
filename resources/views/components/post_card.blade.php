@@ -74,6 +74,14 @@ if ($isShared) {
             <strong>{{ $originalPost->user->fullname }}</strong>'s post
         </span>
     </div>
+
+    {{-- 🔗 VIEW ORIGINAL POST --}}
+    <div class="px-6 pb-3">
+        <a href="/show-post/{{ $originalPost->id }}"
+           class="text-sm text-indigo-600 hover:underline">
+            View original post
+        </a>
+    </div>
 @endif
 
 
@@ -129,6 +137,14 @@ if ($isShared) {
             </svg>
             <span>{{ $numberOfLikes }}</span>
         </div>
+            {{-- 🔁 SHARE COUNT --}}
+            <div class="text-sm text-slate-500">
+            {{ $isShared && $originalPost
+            ? $originalPost->sharesCount()
+            : $post->sharesCount()
+            }} shares
+        </div>
+        
 
         {{-- 💬 COMMENT --}}
         <button
