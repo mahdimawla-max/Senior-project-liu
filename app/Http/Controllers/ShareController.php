@@ -32,7 +32,7 @@ class ShareController extends Controller
         Post::create([
             'userid' => $userId,
             'shared_post_id' => $originalPost->id,
-            'content' => '',
+            'content' => $originalPost->content,
             'categoryid' => $originalPost->categoryid,
             'description' => $request->description ?? null,
         ]);
