@@ -80,9 +80,12 @@
                         class="flex items-center gap-2 focus:outline-none">
 
                         <img
-                            src="{{ auth()->user()->profilepicture ?? '/images/user-placeholder.png' }}"
-                            class="w-9 h-9 rounded-full object-cover border border-slate-300"
-                            alt="User avatar">
+    src="{{ auth()->user()->profilepicture
+        ? asset(auth()->user()->profilepicture)
+        : asset('images/user-placeholder.png') }}"
+    class="w-9 h-9 rounded-full object-cover border border-slate-300"
+    alt="User avatar">
+
 
                         <span class="hidden md:block text-sm font-medium text-gray-200">
                             {{ auth()->user()->fullname }}

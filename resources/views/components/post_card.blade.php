@@ -28,7 +28,7 @@ if ($isShared) {
 <div class="flex items-center justify-between px-6 py-4">
     <div class="flex items-center gap-4">
         {{-- Profile link --}}
-        <a href="/profile/{{ $post->user_id }}"
+        <a href="/profile/"
            class="flex items-center gap-4 hover:opacity-90 transition">
 
             <img class="w-12 h-12 rounded-full object-cover cursor-pointer"

@@ -12,7 +12,8 @@
             <!-- ===== LEFT: AVATAR ===== -->
             <div class="md:w-1/3 text-center">
                 <img
-                    src="{{ ($user->profilepicture) ? $user->profilepicture : '/images/user-placeholder.png' }}"
+                    src="{{ $user->profilepicture ? asset($user->profilepicture) : asset('images/user-placeholder.png') }}"
+
                     alt="Profile Picture"
                     onclick="openImageModal(this.src)"
                     class="w-40 h-40 rounded-full mx-auto object-cover cursor-pointer
