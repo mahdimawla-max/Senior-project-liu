@@ -105,9 +105,10 @@
             <x-post_card :post="$post"></x-post_card>
         @endforeach
 
-        @foreach($shares as $share)
-            <x-share-card :post="$share"></x-share-card>
-        @endforeach
+       @foreach($shares as $post)
+    <x-post_card :post="$post" :isShared="true"></x-post_card>
+@endforeach
+
     </div>
 
 </div>

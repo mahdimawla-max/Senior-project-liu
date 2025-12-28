@@ -44,10 +44,14 @@ if ($isShared) {
                 </span>
 
                 {{-- ✅ CATEGORY BADGE --}}
-                <span class="inline-block mt-1 px-3 py-1 text-xs font-semibold
-                             rounded-full bg-indigo-100 text-indigo-700">
-                    {{ $post->category->name ?? 'General' }}
-                </span>
+               <span class="inline-block mt-1 px-3 py-1 text-xs font-semibold
+             rounded-full bg-indigo-100 text-indigo-700">
+    {{ $isShared && $originalPost
+        ? ($originalPost->category->name ?? 'General')
+        : ($post->category->name ?? 'General')
+    }}
+</span>
+
             </div>
         </a>
     </div>

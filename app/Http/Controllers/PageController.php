@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class PageController extends Controller
 {
-   public function getProfilePage()
+public function getProfilePage()
 {
     $user = Auth::user();
 
@@ -22,7 +22,7 @@ class PageController extends Controller
             'sharedPost.category'
         ])
         ->where('userid', $user->id)
-        ->whereNull('shared_post_id') // ✅ ONLY real posts
+        ->whereNull('shared_post_id')
         ->join('users', 'posts.userid', '=', 'users.id')
         ->select(
             'posts.*',
@@ -33,7 +33,7 @@ class PageController extends Controller
         ->orderBy('posts.created_at', 'desc')
         ->get();
 
-    // ✅ SHARED POSTS (created by user)
+    // ✅ SHARED POSTS (created by user) — FIXED
     $sharePosts = Post::with([
             'comments' => function ($q) {
                 $q->orderBy('created_at', 'desc')->with('user');
@@ -42,7 +42,14 @@ class PageController extends Controller
             'sharedPost.category'
         ])
         ->where('userid', $user->id)
-        ->whereNotNull('shared_post_id') // ✅ ONLY shares
+        ->whereNotNull('shared_post_id')
+        ->join('users', 'posts.userid', '=', 'users.id')   // ✅ ADD THIS
+        ->select(
+            'posts.*',
+            'posts.id as post_id',
+            'users.fullname',
+            'users.profilepicture'
+        )                                                   // ✅ ADD THIS
         ->orderBy('posts.created_at', 'desc')
         ->get();
 
