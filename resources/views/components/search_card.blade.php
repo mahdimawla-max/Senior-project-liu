@@ -12,7 +12,7 @@
                hover:bg-slate-200 dark:hover:bg-slate-600
                transition">
 
-        <span>All Categories</span>
+        <span>Categories</span>
 
         <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none"
              viewBox="0 0 10 6">

@@ -27,23 +27,31 @@ if ($isShared) {
 {{-- Header --}}
 <div class="flex items-center justify-between px-6 py-4">
     <div class="flex items-center gap-4">
-        <img class="w-12 h-12 rounded-full object-cover"
-             src="{{ $post->profilepicture ?: '/images/user-placeholder.png' }}">
-        <div>
-            <p class="font-semibold text-slate-800 dark:text-white">
-                {{ $post->fullname }}
-            </p>
-            <span class="text-sm text-slate-500">
-                {{ $timeAgo }}
-            </span>
+        {{-- Profile link --}}
+        <a href="/profile/{{ $post->user_id }}"
+           class="flex items-center gap-4 hover:opacity-90 transition">
 
-            {{-- ✅ CATEGORY BADGE --}}
-            <span class="inline-block mt-1 px-3 py-1 text-xs font-semibold
-                         rounded-full bg-indigo-100 text-indigo-700">
-                {{ $post->category->name ?? 'General' }}
-            </span>
-        </div>
+            <img class="w-12 h-12 rounded-full object-cover cursor-pointer"
+                 src="{{ $post->profilepicture ? asset($post->profilepicture) : asset('/images/user-placeholder.png') }}">
+
+            <div>
+                <p class="font-semibold text-slate-800 dark:text-white hover:underline">
+                    {{ $post->fullname }}
+                </p>
+
+                <span class="text-sm text-slate-500">
+                    {{ $timeAgo }}
+                </span>
+
+                {{-- ✅ CATEGORY BADGE --}}
+                <span class="inline-block mt-1 px-3 py-1 text-xs font-semibold
+                             rounded-full bg-indigo-100 text-indigo-700">
+                    {{ $post->category->name ?? 'General' }}
+                </span>
+            </div>
+        </a>
     </div>
+
 
     {{-- DELETE BUTTON (OWNER ONLY) --}}
     @if(auth()->id() === $post->userid)
@@ -68,7 +76,10 @@ if ($isShared) {
 @if($isShared && $originalPost)
     <div class="flex items-center gap-2 px-6 pb-2 text-sm text-slate-500">
         <img class="w-8 h-8 rounded-full object-cover"
-             src="{{ $originalPost->user->profilepicture ?? '/images/user-placeholder.png' }}">
+     src="{{ $originalPost->user->profilepicture
+            ? asset($originalPost->user->profilepicture)
+            : asset('images/user-placeholder.png') }}">
+
         <span>
             <strong>{{ $post->fullname }}</strong> shared
             <strong>{{ $originalPost->user->fullname }}</strong>'s post

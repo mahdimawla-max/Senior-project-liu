@@ -53,7 +53,7 @@ class PageController extends Controller
     ]);
 }
 
-     public function showSearchPage($catId = null)
+ public function showSearchPage($catId = null)
 {
     $categories = Category::all();
 
@@ -61,8 +61,8 @@ class PageController extends Controller
             'comments' => function ($q) {
                 $q->orderBy('created_at', 'desc')->with('user');
             },
-            'sharedPost.user',       // ✅ ADD
-            'sharedPost.category',   // ✅ ADD
+            'sharedPost.user',
+            'sharedPost.category',
             'category'
         ])
         ->when($catId, function ($q) use ($catId) {
@@ -72,8 +72,9 @@ class PageController extends Controller
         ->select(
             'posts.*',
             'posts.id as post_id',
+            'users.id as user_id',   // ✅ FIX (do NOT remove)
             'users.fullname',
-            'users.profilepicture'
+            'users.profilepicture as profilepicture'
         )
         ->orderBy('posts.created_at', 'desc')
         ->get();
@@ -83,6 +84,7 @@ class PageController extends Controller
         'posts'      => $posts
     ]);
 }
+
 
 
     public function getLoginPage()
