@@ -75,32 +75,61 @@ class PostController extends Controller
         return redirect('/home');
     }
 
-    public function search(Request $request)
-    {
-        $query = $request->input('query');
-        $categoryId = $request->input('category_id');
+public function search(Request $request)
+{
+    $search = $request->input('query');
+    $categoryId = $request->input('category_id');
 
-        $posts = Post::with([
+    $posts = Post::with([
             'comments' => function ($q) {
-                $q->latest()
-                  ->take(3)
-                  ->with('user'); // ✅ THIS IS THE IMPORTANT FIX
-            }
+                $q->orderBy('created_at', 'desc')->with('user');
+            },
+            'sharedPost.user',
+            'sharedPost.category',
+            'category'
         ])
+        ->join('users', 'posts.userid', '=', 'users.id')
+        ->select(
+            'posts.*',
+            'posts.id as post_id',
+            'users.id as user_id',
+            'users.fullname',
+            'users.profilepicture as profilepicture'
+        )
         ->when($categoryId, function ($q) use ($categoryId) {
-            return $q->where('categoryid', $categoryId);
+            $q->where('posts.categoryid', $categoryId);
         })
-        ->where(function ($q) use ($query) {
-            return $q->where('content', 'like', '%' . $query . '%')
-                     ->orWhere('description', 'like', '%' . $query . '%');
+        ->where(function ($q) use ($search) {
+
+            // 🟢 ORIGINAL POSTS
+            $q->where(function ($qq) use ($search) {
+                $qq->whereNull('posts.shared_post_id')
+                   ->where(function ($qqq) use ($search) {
+                       $qqq->where('posts.content', 'like', "%{$search}%")
+                           ->orWhere('posts.description', 'like', "%{$search}%");
+                   });
+            });
+
+            // 🔁 SHARED POSTS (search original)
+            $q->orWhere(function ($qq) use ($search) {
+                $qq->whereNotNull('posts.shared_post_id')
+                   ->whereHas('sharedPost', function ($qqq) use ($search) {
+                       $qqq->where('content', 'like', "%{$search}%")
+                           ->orWhere('description', 'like', "%{$search}%");
+                   });
+            });
+
         })
-        ->latest()
+        ->orderBy('posts.created_at', 'desc')
         ->get();
 
-        $categories = Category::all();
+    $categories = Category::all();
 
-        return view('pages.home', compact('posts', 'categories'));
-    }
+    return view('pages.home', compact('posts', 'categories'));
+}
+
+
+
 
    public function react(Request $request, $id)
 {
