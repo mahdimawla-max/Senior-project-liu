@@ -53,21 +53,42 @@
                 </div>
 
                 <!-- Profile Picture -->
-                <div>
-                    <label class="text-gray-700 text-sm font-medium mb-2 block">
-                        Profile Picture
-                    </label>
-                    <input
-                        name="profilepicture"
-                        type="file"
-                        class="w-full bg-gray-100 text-gray-800 text-sm px-4 py-3 rounded-lg
-                               file:mr-4 file:py-2 file:px-4
-                               file:rounded-md file:border-0
-                               file:bg-indigo-600 file:text-white
-                               hover:file:bg-indigo-700
-                               transition"
-                    />
-                </div>
+                <!-- Profile Picture -->
+<div>
+    <label class="text-gray-700 text-sm font-medium mb-2 block">
+        Profile Picture
+    </label>
+
+    <div class="flex items-center gap-6">
+
+        {{-- Avatar Preview --}}
+        <img
+            src="{{ $user->profilepicture ?? '/images/user-placeholder.png' }}"
+            alt="Profile picture preview"
+            class="w-20 h-20 rounded-full object-cover border border-gray-300 shadow-sm">
+
+        {{-- Upload Button --}}
+        <div>
+            <label
+                class="inline-flex items-center px-5 py-2.5
+                       rounded-lg bg-indigo-600 text-white text-sm font-medium
+                       cursor-pointer hover:bg-indigo-700 transition">
+                Change Photo
+                <input
+                    type="file"
+                    name="profilepicture"
+                    class="hidden"
+                    accept="image/*">
+            </label>
+
+            <p class="text-xs text-gray-500 mt-2">
+                JPG, PNG, or JPEG (max 5MB)
+            </p>
+        </div>
+
+    </div>
+</div>
+
 
                 <!-- Location -->
                 <div>
@@ -99,18 +120,35 @@
 
             </div>
 
-            <!-- ================= SUBMIT BUTTON ================= -->
-            <div class="mt-10 text-center">
-                <button
-                    type="submit"
-                    class="inline-flex items-center justify-center px-8 py-3
-                           rounded-lg bg-indigo-600 text-white text-sm font-medium
-                           hover:bg-indigo-700 hover:shadow-md
-                           transition-all duration-200"
-                >
-                    Save Changes
-                </button>
-            </div>
+           <!-- ================= ACTION BUTTONS ================= -->
+<div class="mt-10 flex items-center justify-center gap-4">
+
+    {{-- Cancel --}}
+    <button
+        type="button"
+        onclick="history.back()"
+        class="inline-flex items-center justify-center px-8 py-3
+               rounded-lg border border-gray-300
+               text-gray-700 text-sm font-medium
+               hover:bg-gray-100
+               transition-all duration-200"
+    >
+        Cancel
+    </button>
+
+    {{-- Save --}}
+    <button
+        type="submit"
+        class="inline-flex items-center justify-center px-8 py-3
+               rounded-lg bg-indigo-600 text-white text-sm font-medium
+               hover:bg-indigo-700 hover:shadow-md
+               transition-all duration-200"
+    >
+        Save Changes
+    </button>
+
+</div>
+
 
         </form>
     </div>
